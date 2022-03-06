@@ -81,7 +81,7 @@ for k in range(numberOfTests):
     pricesAV.append(priceAV)        
     timesAV.append(end - start)
    
-    #the with control variates     
+    #then with control variates
     start = time.time()
     priceCV = cliquetWithControlVariates.getPriceViaControlVariates()  
     end = time.time()

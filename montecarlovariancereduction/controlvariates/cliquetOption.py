@@ -48,15 +48,15 @@ class CliquetOption:
     payoffSingleTrajectory(returns):
         It returns the payoff of the Cliquet option for a specific simulation,
         not yet discounted
-   
-    discountedPriceOfTheOption(returnsForAllSimulations, interestRate):
-        It returns the discounted price of the Cliquet option, as the discounted
-        average of the payoffs for a single simulation of the returns.
-        
+
     getPayoffs(self, returnsForAllSimulations):
         It returns the payoffs of the Cliquet option for all the simulations,
         not yet discounted
-  
+
+   discountedPriceOfTheOption(returnsForAllSimulations, interestRate):
+        It returns the discounted price of the Cliquet option, as the discounted
+        average of the payoffs for a single simulation of the returns.
+
     """
     
     def __init__(self, numberOfSimulations, maturity, localFloor, localCap, globalFloor, globalCap):
@@ -112,7 +112,7 @@ class CliquetOption:
         
         truncatedReturns = [min(max(x - 1, self.localFloor), self.localCap) for x in returns]
         
-        #you see how simply we can get the sum of elements of a list
+        #you see how simply we can get the sum of elements of a list (or of an array)
         payoff = min(max(sum(truncatedReturns), self.globalFloor), self.globalCap)
         
         # we don't discount the payoff now. Can you guess why?
@@ -131,7 +131,7 @@ class CliquetOption:
 
         Returns
         -------
-        payoff : float
+        payoff : list
             the payoffs of the Cliquet option for the all the simulations
 
         """

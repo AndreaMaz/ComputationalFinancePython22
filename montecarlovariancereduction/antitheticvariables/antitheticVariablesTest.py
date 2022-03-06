@@ -37,10 +37,12 @@ for numberOfSimulations in numbersOfSimulations:
         compare(numberOfSimulations,initialValue, sigma, T, strike, r)
     averageErrorsWithStandardMC.append(averageErrorWithStandardMC) 
     averageErrorsWithAV.append(averageErrorWithAV)
-   
+
 plt.plot(numbersOfSimulations,averageErrorsWithStandardMC, 'bo')
 plt.plot(numbersOfSimulations,averageErrorsWithAV, 'ro')
 plt.xlabel('Number of simulations')
 plt.ylabel('Average error')
-plt.title('Average errors in the valuation of a call option for standard Monte-Carlo and Antithetic Variables methods')
-plt.show() 
+plt.title('Average errors for a call option, with standard M-C and Antithetic Variables')
+plt.legend(['Standard Monte-Carlo', 'Antithetic Variables'])
+plt.show()
+

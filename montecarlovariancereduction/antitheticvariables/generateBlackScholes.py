@@ -44,10 +44,12 @@ class GenerateBlackScholes:
     -------
     generateRealizations(self):
         It generates a number N = self.numberOfSimulations of realizations of the
-        log-normal process at time self.T.
+        log-normal process at time self.T, and returns the realizations as a list
+        (or as an array, if the methods gets suitably modified)
     generateRealizationsAntitheticVariables(self):
         It generates a number N = self.numberOfSimulations of realizations of the
-        log-normal process at time self.T, using Antithetic Variables
+        log-normal process at time self.T, using Antithetic Variables, and returns
+        the realizations as a list (or as an array, if the methods gets suitably modified)
     """
     
      #Python specific syntax for the constructor
@@ -85,7 +87,8 @@ class GenerateBlackScholes:
     def generateRealizations(self):
         """
         It generates a number N = self.numberOfSimulations of realizations of the
-        log-normal process at time self.T.
+        log-normal process at time self.T, and returns the realizations as a list
+        (or as an array, if the methods gets suitably modified)
         
         In particular, it does it by generating N values of standard normal
         random variables Z(j), j = 1, ..., N, and computing for every j
@@ -99,30 +102,41 @@ class GenerateBlackScholes:
         """
                     
         #note the way to get a given number of realizations of a standard normal
-        #random variable. Also note that in order to access the specific field of the
-        #the class, we have to refer to it with "self.". Same things for methods
+        #random variable, as an array. Also note that in order to access the specific
+        #field of the the class, we have to refer to it with "self.". Same things for methods
         standardNormalRealizations = np.random.standard_normal(self.numberOfSimulations)
 
         #we don't want to compute this every time.
         firstPart = self.initialValue * math.exp((self.r - 0.5 * self.sigma**2) * self.T)
-        
-        def BSFunction(x):
-            return firstPart * math.exp(self.sigma * math.sqrt(self.T) * x)
-        
+
+        BSFunction = lambda x : firstPart * math.exp(self.sigma * math.sqrt(self.T) * x)
+        #or:
+
+        # def BSFunction(x):
+        #    return firstPart * math.exp(self.sigma * math.sqrt(self.T) * x)
+
+
         #look at this peculiar Python for loop: this is equivalent to write
         #for k in range (standardNormalRealizations.length)
         #    blackScholesRealizations[k] = firstPart * math.exp(self.sigma * math.sqrt(self.T) * blackScholesRealizations[k])
-        #The part (fox x in self.processRealizations) is similar to the Java foreach.
-        #loop. 
+        #The part (fox x in self.processRealizations) is similar to the Java foreach loop.
+        #Such a loop returns a list
         blackScholesRealizations = [BSFunction(x) for x in standardNormalRealizations]
-            
+
+        #alternative way if you want blackScholesRealizations to be an array:
+        #blackScholesRealizations = np.array([BSFunction(x) for x in standardNormalRealizations])
+
+        #another way to return an array:
+        #blackScholesRealizations = BSFunction(standardNormalRealizations)
+
         return blackScholesRealizations
        
         
     def generateRealizationsAntitheticVariables(self):
         """
         It generates a number N = self.numberOfSimulations of realizations of the
-        log-normal process at time self.T.
+        log-normal process at time self.T, using Antithetic variables, and returns
+        the realizations as a list (or as an array, if the methods gets suitably modified)
         
         In particular, it does it by first generating N values of standard normal
         random variables Z(j), j = 1, ..., N/2, Z(n/2+j)=-Z(j), j = 1, ..., N/2
@@ -144,11 +158,14 @@ class GenerateBlackScholes:
         
         #we don't want to compute this every time.
         firstPart = self.initialValue * math.exp((self.r - 0.5 * self.sigma**2) * self.T)
-        
-        #note the use of the concatenation operator "+" between Python lists 
-        blackScholesRealizations = [firstPart * math.exp(self.sigma * math.sqrt(self.T) * x) \
-            for x in standardNormalRealizations] + \
-            [firstPart * math.exp(self.sigma * math.sqrt(self.T) * (-x)) \
-            for x in standardNormalRealizations]
+
+        BSFunction = lambda x: firstPart * math.exp(self.sigma * math.sqrt(self.T) * x)
+
+        #note the use of the concatenation operator "+" between Python lists
+        blackScholesRealizations = [BSFunction(x) for x in standardNormalRealizations] + \
+          [BSFunction(-x) for x in standardNormalRealizations]
+
+        #alternatively, to get an array:
+        #blackScholesRealizations = np.concatenate((BSFunction(standardNormalRealizations), BSFunction(-standardNormalRealizations)))
                
         return blackScholesRealizations

@@ -7,6 +7,7 @@ on a Black-Scholes model.
     
 @author: Andrea Mazzon
 """
+
 import numpy as np
 from statistics import mean
 
@@ -59,7 +60,6 @@ def compare(numberOfSimulations, initialValue, sigma, T, strike, r = 0):
 
     #look at how lambda functions are defined in Python 
     payoff = lambda x : max(x - initialValue, 0)
-    
     #alternatively:
     #def payoff(x):
     #    return max(x - initialValue, 0)
@@ -69,8 +69,6 @@ def compare(numberOfSimulations, initialValue, sigma, T, strike, r = 0):
     blackScholesGenerator = GenerateBlackScholes(numberOfSimulations, T, initialValue, sigma, r)
     #k=0,..,numberOfTests - 1
     for k in range(numberOfTests):
-    
-            
 
         #first, the valuation with the standard Monte-Carlo:
         realizationsOfTheProcessWithStandardMC = blackScholesGenerator.generateRealizations()

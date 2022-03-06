@@ -45,10 +45,11 @@ class GenerateBSReturns:
     -------
     generateReturns():
         It returns a number N = self.numberOfSimulations of realizations of the
-        log-normal process at time self.T.
+        log-normal process at time self.T. The realizations are stored in a list.
     generateReturnsAntitheticVariables():
         It returns a number N = self.numberOfSimulations of realizations of the
-        log-normal process at time self.T, using Antithetic Variables
+        log-normal process at time self.T, using Antithetic Variables. The realizations
+        are stored in a list.
     """
     
      #Python specific syntax for the constructor

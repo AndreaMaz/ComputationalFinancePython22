@@ -205,10 +205,11 @@ class ControlVariatesCliquetBS:
             the discounted price of the option.
 
         """
-                
+
+        #just in order to deal with shorter expressions..
+
         numberOfSimulations = self.numberOfSimulations
         
-        #just in order to deal with shorter expressions..
         T = self.maturity
         numberOfIntervals = self.numberOfIntervals
         
@@ -235,7 +236,6 @@ class ControlVariatesCliquetBS:
         
         #..and then we want to get the analytic price and the Monte-Carlo price of
         #the option in the case where there is no truncation of the final sum:
-        
     
         #first the Monte-Carlo price: see here two ways to represent infinity
         globalFloorForNonTruncatedSum = - np.inf
@@ -251,7 +251,7 @@ class ControlVariatesCliquetBS:
         #and now the analytic value
         analyticPriceOfNonTruncatedSum = self.getAnalyticPriceOfNonTruncatedSum()
         
-        #now we want to computre the optimal beta, see the script
+        #now we want to compute the optimal beta, see the script
         payoffsWhenTruncated = cliquetOption.getPayoffs(returnsRealizations)
         payoffsWhenNotTruncated = cliquetOptionForNonTruncatedSum.getPayoffs(returnsRealizations)  
 

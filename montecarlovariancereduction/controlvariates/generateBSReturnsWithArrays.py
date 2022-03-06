@@ -18,7 +18,7 @@ class GenerateBSReturns:
     where Z is a standard normal random variable and dt is the (constant)
     length of the intervals
     
-    The returns are stored in a matrix represented by a list.
+    The returns are stored in a matrix represented by a numpy array.
     
     We proceed in two different ways:
         - we generate the realizations of Z directly;
@@ -45,10 +45,12 @@ class GenerateBSReturns:
     -------
     generateReturns(self):
         It returns a number N = self.numberOfSimulations of realizations of the
-        log-normal process at time self.T.
+        log-normal process at time self.T. The realizations are stored in a numpy
+        array.
     generateReturnsAntitheticVariables(self):
         It returns a number N = self.numberOfSimulations of realizations of the
-        log-normal process at time self.T, using Antithetic Variables
+        log-normal process at time self.T, using Antithetic Variables. The realizations
+        are stored in a numpy array.
     """
     
      #Python specific syntax for the constructor
@@ -95,7 +97,8 @@ class GenerateBSReturns:
         
         standardNormalRealizations = \
             np.random.standard_normal(size=(self.numberOfSimulations,self.numberOfIntervals))
-        
+
+        #try to use math.exp: what does it happen? why?
         blackScholesReturns = firstPart * np.exp(self.sigma * math.sqrt(lenghthOfIntervals) * standardNormalRealizations)
             
         return blackScholesReturns
@@ -123,7 +126,7 @@ class GenerateBSReturns:
         standardNormalRealizations = \
             np.random.standard_normal(size=(halfSimulations,self.numberOfIntervals))
 
-
+        #try to use math.exp: what does it happen? why?
         firstBlackScholesReturns = firstPart * np.exp(self.sigma * math.sqrt(lenghthOfIntervals) * standardNormalRealizations)
         secondBlackScholesReturns = firstPart * np.exp(self.sigma * math.sqrt(lenghthOfIntervals) * (-standardNormalRealizations))
 
