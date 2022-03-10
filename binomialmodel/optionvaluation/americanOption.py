@@ -78,7 +78,7 @@ class AmericanOption:
         
         #we proceed backwards: we start from the payoff 
         processRealizations = binomialModel.getRealizationsAtGivenTime(maturity)
-        payoffRealizations = [payoffFunction(x) for x in processRealizations]
+        payoffRealizations = np.array([payoffFunction(x) for x in processRealizations])
         
         #note that since here we are only interested to the price, we don't 
         #define any matrix but simply store the successive values of the option
@@ -91,16 +91,18 @@ class AmericanOption:
 
             processRealizations = binomialModel.getRealizationsAtGivenTime(timeIndexBackward)               
             #the money we get if we exercise the option
-            optionPart = [payoffFunction(x) for x in processRealizations]   
+            optionPart = [payoffFunction(x) for x in processRealizations]
             
             #the money we get if we wait: 
             #V(j,k)=qV(j+1,k+1)+(1-q)V(j+1,k+1), where j is time and k the number
             #of ups up to time
-            valuationPart = [(q * x + (1 - q) * y)/(1+rho) for x,y in 
-                              zip(valuesOption[:-1],  valuesOption[1:])]    
-            
+            #valuationPart = [(q * x + (1 - q) * y)/(1+rho) for x,y in
+            #                  zip(valuesOption[:-1],  valuesOption[1:])]
+
+            valuationPart = (q * valuesOption[:-1] + (1 - q) * valuesOption[1:])/(1+rho)
+
             #and then we take the maximums: these are the current values of the option
-            valuesOption = [max(x,y) for x,y in zip(optionPart, valuationPart)]    
+            valuesOption = np.maximum(optionPart, valuationPart)
         
         return valuesOption[0]
     

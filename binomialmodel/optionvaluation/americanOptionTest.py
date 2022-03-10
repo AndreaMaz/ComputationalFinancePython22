@@ -30,3 +30,4 @@ valuesOption, valuesExercise, valuesIfWait, exercise = \
     myPayoffEvaluator.analysisOption(payoff, maturity)
 
 print("The value of the option is ", myPayoffEvaluator.getValueOption(payoff, maturity))
+
