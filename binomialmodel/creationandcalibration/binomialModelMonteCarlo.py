@@ -65,21 +65,21 @@ class BinomialModelMonteCarlo(BinomialModel):
         It prints the evolution of the average of the process discounted at time 0
     plotEvolutionDiscountedAverage()
         It plots the evolution of the average of the process discounted at time 0
-    getProbabilityOfGainAtGivenTime(timeIndex)
-        It returns the probability that (1+rho)^(-j)S(j)>S(0)
-    getEvolutionProbabilityOfGain()
-        It returns the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    getPercentageOfGainAtGivenTime(timeIndex)
+        It returns the percentage that (1+rho)^(-j)S(j)>S(0)
+    getEvolutionPercentageOfGain()
+        It returns the evolution of percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
-    printEvolutionProbabilitiesOfGain()
-        It prints the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    printEvolutionPercentagesOfGain()
+        It prints the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
-    plotEvolutionProbabilitiesOfGain()
-        It plots the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    plotEvolutionPercentagesOfGain()
+        It plots the evolution of percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
     getUpsAndDowns()
-        It returns a matrix whose single entry is u > rho + 1 with probability
-        equal to self.riskNeutralProbabilityUp and d < 1 with probability
-        equal to 1 - self.riskNeutralProbabilityUp
+        It returns a matrix whose single entry is u > rho + 1 with percentage
+        equal to self.riskNeutralPercentageUp and d < 1 with percentage
+        equal to 1 - self.riskNeutralPercentageUp
     getPath(timeIndex)
         It returns the entire path of the process for a given simulation index
     printPath(timeIndex)
@@ -104,7 +104,7 @@ class BinomialModelMonteCarlo(BinomialModel):
     def __init__(self, initialValue, decreaseIfDown, increaseIfUp,
                  numberOfTimes, numberOfSimulations,
                  interestRate=0,  # it is =0 if not specified
-                 mySeed=1897  # it is =1897 if not specified)
+                 mySeed=1897  # it is =1897 if not specified
                  ):
         """
         Attributes
@@ -163,28 +163,28 @@ class BinomialModelMonteCarlo(BinomialModel):
         """
         It generates and returns the realizations of the process.
 
-        The realizations are hosted in an array matrix S whose row i represent the value
+        The realizations are hosted in an array matrix S whose row i represents the value
         of the process at time i for all the state of the world, and whose column
-        j represents the path of the process for the simulation (or state of the world)
-        j.
+        j represents the path of the process for the simulation (or state of the world) j.
 
         Returns
         -------
         array
             The matrix hosting the realizations of the process.
         """
-        # maybe, in this case, it is better dealing with arrays instead of lists.
+        # maybe, in this case, it is better to deal with arrays instead of lists.
         # If realizations are hosted in an array, it's easier to perform
         # operations with them: for example, remember that when you sum or
         # multiply two lists, the operation is not executed component-wise.
         realizations = np.full((self.numberOfTimes, self.numberOfSimulations), math.nan)
         # first the initial values. Look at how we can fill a vector with a single
         # value in Python.
-        realizations[0] = [self.initialValue] * self.numberOfSimulations
-        # realizations[0] = np.full((self.numberOfSimulations),self.initialValue)
+        realizations[0] = np.full((self.numberOfSimulations),self.initialValue)
+        #realizations[0] = [self.initialValue] * self.numberOfSimulations
         upsAndDowns = self.getUpsAndDowns()
         for timeIndex in range(1, self.numberOfTimes):
             # S[i+1,j] = upsAndDowns[i,j]S[i,j]
+            # note: this is an element-wise operation between one-dimensional arrays!
             realizations[timeIndex] = realizations[timeIndex - 1] * upsAndDowns[timeIndex - 1]
         return realizations
 
@@ -245,7 +245,7 @@ class BinomialModelMonteCarlo(BinomialModel):
         print('\n'.join('{:.3}'.format(realization) for realization in path))
         print()
 
-    def plotPaths(self, simulationIndex, numberOfPaths):
+    def plotPaths(self, simulationIndex, numberOfPathsToBePlotted):
         """
         It plots the paths of the process from simulationIndex to
         simulationIndex + numberOfPaths
@@ -260,7 +260,7 @@ class BinomialModelMonteCarlo(BinomialModel):
         None.
 
         """
-        for k in range(numberOfPaths):
+        for k in range(numberOfPathsToBePlotted):
             path = self.getPath(simulationIndex + k);
             plt.plot(path)
         plt.xlabel('Time')
@@ -286,27 +286,26 @@ class BinomialModelMonteCarlo(BinomialModel):
         # look at the use of np.mean: we get the average of the elements of a list
         return (1 + self.interestRate) ** (-timeIndex) * np.mean(realizationsAtTimeIndex)
 
-    def getProbabilityOfGainAtGivenTime(self, timeIndex):
+    def getPercentageOfGainAtGivenTime(self, timeIndex):
         """
         Parameters
         ----------
         timeIndex : int
-            The time j at which we want the probability that (1+rho)^(-j)S(j)>S(0)
+            The time j at which we want the percentage that (1+rho)^(-j)S(j)>S(0)
             with rho = self.interestRate
 
         Returns
         -------
         float
-            the probability that (1+rho)^(-timeIndex)S(timeIndex)>S(0)
+            the percentage that (1+rho)^(-timeIndex)S(timeIndex)>S(0)
             with rho = self.interestRate
 
         """
         realizationsAtTimeIndex = self.getRealizationsAtGivenTime(timeIndex)
 
         # see how to convert booleans into numbers.
-
-        booleans = self.initialValue * ((1 + self.interestRate) ** timeIndex) <= realizationsAtTimeIndex
-        zeroAndOnes = booleans.astype(int)
+        indicatorsAsBooleans = self.initialValue * ((1 + self.interestRate) ** timeIndex) <= realizationsAtTimeIndex
+        zeroAndOnes = indicatorsAsBooleans.astype(int)
 
         # or:
         # zeroAndOnes = [int(self.initialValue*((1+self.interestRate)**timeIndex) <= x)

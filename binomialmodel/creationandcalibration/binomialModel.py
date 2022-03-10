@@ -10,8 +10,9 @@ import matplotlib.pyplot as plt
 
 class BinomialModel(metaclass=abc.ABCMeta):
     """
-    This is an abstract class whose main goal is to construct a binomial model.
-    It can be extended by classes providing the way to simulate it
+    This is an abstract class whose main goal is to get the main features of a binomial model,
+    like the evolution of its average or of its realizations.
+    It can be extended by classes providing the way to construct it
 
     ...
 
@@ -20,9 +21,9 @@ class BinomialModel(metaclass=abc.ABCMeta):
     initialValue : float
         the initial value S(0) of the process
     decreaseIfDown : float
-        the number d such that S(j+1)=S(j) with probability 1 - q
+        the number d such that S(j+1)=dS(j) with probability 1 - q
     increaseIfUp : float
-        the number u such that S(j+1)=S(j) with probability q
+        the number u such that S(j+1)=uS(j) with probability q
     numberOfTimes : int
         the number of times at which the process is simulated, initial time
         included
@@ -52,16 +53,16 @@ class BinomialModel(metaclass=abc.ABCMeta):
         It prints the evolution of the average of the process discounted at time 0
     plotEvolutionDiscountedAverage()
         It plots the evolution of the average of the process discounted at time 0
-    getProbabilityOfGainAtGivenTime(timeIndex)
-        It returns the probability that (1+rho)^(-j)S(j)>S(0)
-    getEvolutionProbabilityOfGain()
-        It returns the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    getPercentageOfGainAtGivenTime(timeIndex)
+        It returns the percentage that (1+rho)^(-j)S(j)>S(0)
+    getEvolutionPercentageOfGain()
+        It returns the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
-    printEvolutionProbabilitiesOfGain()
-        It prints the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    printEvolutionPercentagesOfGain()
+        It prints the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
-    plotEvolutionProbabilitiesOfGain()
-        It plots the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    plotEvolutionPercentagesOfGain()
+        It plots the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
     """
 
@@ -76,9 +77,9 @@ class BinomialModel(metaclass=abc.ABCMeta):
         initialValue : float
             the initial value S(0) of the process
         decreaseIfDown : float
-            the number d such that S(j+1)=S(j) with probability 1 - q
+            the number d such that S(j+1)=dS(j) with probability 1 - q
         increaseIfUp : float
-            the number u such that S(j+1)=S(j) with probability q
+            the number u such that S(j+1)=uS(j) with probability q
         numberOfTimes : int
             the number of times at which the process is simulated, initial time
             included
@@ -96,10 +97,9 @@ class BinomialModel(metaclass=abc.ABCMeta):
         # we generate the realizations once for all, during the call to the constructor
         self.realizations = self.generateRealizations()
 
-    # note the syntax: this is an asbtract class, whose implementation will be
+    # note the syntax: this is an abstract method, whose implementation will be
     # given in the derived classes. In our case, we will see the implementation
-    # with a pure Monte Carlo method and a smarter one
-
+    # with a pure Monte Carlo method and a smarter one.
     @abc.abstractmethod
     def generateRealizations(self):
         """It generates the realizations of the process.
@@ -140,8 +140,6 @@ class BinomialModel(metaclass=abc.ABCMeta):
             discounted at time 0.
         """
 
-        # note this shortcup that Python offers us to run a for loop that
-        # generates a list
         return [self.getDiscountedAverageAtGivenTime(timeIndex)
                 for timeIndex in range(self.numberOfTimes)]
 
@@ -171,54 +169,56 @@ class BinomialModel(metaclass=abc.ABCMeta):
         plt.title('Evolution of the discounted average of the process')
         plt.show()
 
+    # Also the way we compute this percentage depends on how we construct
+    # Binomial model: for this reason, this is an abstract method.
     @abc.abstractmethod
-    def getProbabilityOfGainAtGivenTime(self, timeIndex):
+    def getPercentageOfGainAtGivenTime(self, timeIndex):
         """
-        It returns the probability that (1+rho)^(-timeIndex)S(timeIndex)>S(0)
+        It returns the percentage that (1+rho)^(-timeIndex)S(timeIndex)>S(0)
 
         Parameters
         ----------
         timeIndex : int
-            The time at which we want to get the probability
+            The time at which we want to get the percentage
         Returns
         -------
         float
-            The probability that (1+rho)^(-timeIndex)S(timeIndex)>S(0)
+            The percentage that (1+rho)^(-timeIndex)S(timeIndex)>S(0)
         """
 
-    def getEvolutionProbabilityOfGain(self):
+    def getEvolutionPercentageOfGain(self):
         """
         Returns
         -------
         list
-            A list representing the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+            A list representing the evolution of percentage that (1+rho)^(-j)S(j)>S(0), for
             j going from 1 to self.numberOfTimes - 1 .
 
         """
 
-        return [self.getProbabilityOfGainAtGivenTime(timeIndex)
+        return [self.getPercentageOfGainAtGivenTime(timeIndex)
                 for timeIndex in range(self.numberOfTimes)]
 
-    def printEvolutionProbabilitiesOfGain(self):
+    def printEvolutionPercentagesOfGain(self):
         """
-        It prints the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+        It prints the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
         """
-        probabilitiesPath = self.getEvolutionProbabilityOfGain();
+        percentagesPath = self.getEvolutionPercentageOfGain();
 
-        print("The path of the probability evolution  is the following:")
+        print("The path of the percentage evolution  is the following:")
         print()
-        print('\n'.join('{:.3}'.format(prob) for prob in probabilitiesPath))
+        print('\n'.join('{:.3}'.format(prob) for prob in percentagesPath))
         print()
 
-    def plotEvolutionProbabilitiesOfGain(self):
+    def plotEvolutionPercentagesOfGain(self):
         """
-        "It plots the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+        "It plots the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
         """
-        probabilitiesPath = self.getEvolutionProbabilityOfGain();
-        plt.plot(probabilitiesPath)
+        percentagesPath = self.getEvolutionPercentageOfGain();
+        plt.plot(percentagesPath)
         plt.xlabel('Time')
-        plt.ylabel('Probability')
-        plt.title('Evolution of Q(S(j+1)>(1+rho)^jS(0)))')
+        plt.ylabel('Percentage')
+        plt.title('Evolution of 100*Q(S(j+1)>(1+rho)^jS(0)))')
         plt.show()

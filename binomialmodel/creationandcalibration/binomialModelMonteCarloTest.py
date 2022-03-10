@@ -15,7 +15,7 @@ from binomialModelMonteCarlo import BinomialModelMonteCarlo
 initialValue = 3
 decreaseIfDown = 0.9
 increaseIfUp = 1.1
-numberOfTimes = 500
+numberOfTimes = 5
 numberOfSimulations = 100000
 interestRate = 0.05
 
@@ -30,14 +30,14 @@ myBinomialModel.printPath(simulationNumber)
 # and we plot some paths
 myBinomialModel.plotPaths(simulationNumber, 5)
 
-# discounted average of the process and probability of gains:
+# discounted average of the process and percentage of gains:
 
 # prints..
 myBinomialModel.printEvolutionDiscountedAverage()
-myBinomialModel.printEvolutionProbabilitiesOfGain()
+myBinomialModel.printEvolutionPercentagesOfGain()
 myBinomialModel.printEvolutionMaximum()
 
 # ..and plots
 myBinomialModel.plotEvolutionDiscountedAverage()
-myBinomialModel.plotEvolutionProbabilitiesOfGain()
+myBinomialModel.plotEvolutionPercentagesOfGain()
 myBinomialModel.plotEvolutionMaximum()

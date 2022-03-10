@@ -62,16 +62,16 @@ class BinomialModelSmartWithLists(BinomialModel):
         It prints the evolution of the average of the process discounted at time 0
     plotEvolutionDiscountedAverage()
         It plots the evolution of the average of the process discounted at time 0
-    getProbabilityOfGainAtGivenTime(timeIndex)
-        It returns the probability that (1+rho)^(-j)S(j)>S(0)
-    getEvolutionProbabilityOfGain()
-        It returns the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    getPercentageOfGainAtGivenTime(timeIndex)
+        It returns the percentage that (1+rho)^(-j)S(j)>S(0)
+    getEvolutionPercentageOfGain()
+        It returns the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
-    printEvolutionProbabilitiesOfGain()
-        It prints the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    printEvolutionPercentagesOfGain()
+        It prints the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
-    plotEvolutionProbabilitiesOfGain()
-        It plots the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    plotEvolutionPercentagesOfGain()
+        It plots the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
     getProbabilitiesOfRealizationsAtGivenTime(timeIndex)
         It returns the probabilities corresponding to every possible realization
@@ -265,18 +265,18 @@ class BinomialModelSmartWithLists(BinomialModel):
         d = self.decreaseIfDown
         return math.ceil(math.log(((1 + rho) / d) ** timeIndex, u / d))
 
-    def getProbabilityOfGainAtGivenTime(self, timeIndex):
+    def getPercentageOfGainAtGivenTime(self, timeIndex):
         """
         Parameters
         ----------
         timeIndex : int
-            The time j at which we want the probability that (1+rho)^(-j)S(j)>S(0)
+            The time j at which we want the percentage that (1+rho)^(-j)S(j)>S(0)
             with rho = self.interestRate
 
         Returns
         -------
         float
-            the probability that (1+rho)^(-timeIndex)S(timeIndex)>S(0)
+            the percentage that (1+rho)^(-timeIndex)S(timeIndex)>S(0)
             with rho = self.interestRate
 
         """

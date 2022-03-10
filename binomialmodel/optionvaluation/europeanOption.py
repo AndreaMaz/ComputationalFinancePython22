@@ -12,8 +12,8 @@ class EuropeanOption:
     a general payoff at a given maturity. 
     
     It is also possible to get the values at any time before the maturity of
-    an admissible portfolio, consisting of an amount of money in the risky asset
-    and a one invested on the risk free asset, that must replicate the payoff at
+    an admissible portfolio, consisting of an investment of money in the risky asset
+    and of an investment on the risk free asset, that must replicate the payoff at
     maturity. Moreover, the strategy (i.e., how much money is invested
     in the risky and risk free asset) can be got at any time before maturity.
     

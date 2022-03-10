@@ -6,7 +6,7 @@
 import numpy as np
 import scipy.special
 import math
-from binomialmodel.creationandcalibration.binomialModel import BinomialModel as BinomialModel
+from binomialmodel.creationandcalibration.binomialModel import BinomialModel
 
 
 class BinomialModelSmart(BinomialModel):
@@ -64,16 +64,16 @@ class BinomialModelSmart(BinomialModel):
         It prints the evolution of the average of the process discounted at time 0
     plotEvolutionDiscountedAverage()
         It plots the evolution of the average of the process discounted at time 0
-    getProbabilityOfGainAtGivenTime(timeIndex)
-        It returns the probability that (1+rho)^(-j)S(j)>S(0)
-    getEvolutionProbabilityOfGain()
-        It returns the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    getPercentageOfGainAtGivenTime(timeIndex)
+        It returns the percentage that (1+rho)^(-j)S(j)>S(0)
+    getEvolutionPercentageOfGain()
+        It returns the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
-    printEvolutionProbabilitiesOfGain()
-        It prints the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    printEvolutionPercentagesOfGain()
+        It prints the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
-    plotEvolutionProbabilitiesOfGain()
-        It plots the evolution of probability that (1+rho)^(-j)S(j)>S(0), for
+    plotEvolutionPercentagesOfGain()
+        It plots the evolution of the percentage that (1+rho)^(-j)S(j)>S(0), for
         j going from 1 to self.numberOfTimes - 1
     getProbabilitiesOfRealizationsAtGivenTime(timeIndex)
         It returns the probabilities corresponding to every possible realization
@@ -148,19 +148,6 @@ class BinomialModelSmart(BinomialModel):
             realizationsAtTime = self.decreaseIfDown * realizations[k - 1, 0:k]
             realizations[k, 1:k + 1] = realizationsAtTime
         return realizations
-
-    def getRealizations(self):
-        """
-        It returns the realizations of the processs
-
-        Returns
-        -------
-        realization : array
-            a matrix representing the realizations of the process
-
-        """
-
-        return self.realizations
 
     def getRealizationsAtGivenTime(self, timeIndex):
         """
@@ -244,53 +231,6 @@ class BinomialModelSmart(BinomialModel):
               " from the largest realizations to the smallest are ")
         print('\n'.join('{:.3}'.format(prob) for prob in probabilities))
 
-    def findThreshold(self, timeIndex):
-        """
-        It returns the smallest integer k such that (u)^kd^(timeIndex-k) > 1,
-        i.e., such that the realization of the process given by k ups and
-        timeIndex - k downs, discounted at time 0, is bigger than the initial value.
-
-        Parameters
-        ----------
-        timeIndex : int
-            the time at which we want to compute such a threshold.
-
-        Returns
-        -------
-        int
-            the smallest integer k such that (u)^kd^(timeIndex-k) > 1
-
-        """
-        rho = self.interestRate
-        u = self.increaseIfUp
-        d = self.decreaseIfDown
-        return math.ceil(math.log(((1 + rho) / d) ** timeIndex, u / d))
-
-    def getProbabilityOfGainAtGivenTime(self, timeIndex):
-        """
-        Parameters
-        ----------
-        timeIndex : int
-            The time j at which we want the probability that (1+rho)^(-j)S(j)>S(0)
-            with rho = self.interestRate
-
-        Returns
-        -------
-        float
-            the probability that (1+rho)^(-timeIndex)S(timeIndex)>S(0)
-            with rho = self.interestRate
-
-        """
-        if timeIndex == 0:
-            return 100.0
-        else:
-            probabilities = self.getProbabilitiesOfRealizationsAtGivenTime(timeIndex)
-            threshold = self.findThreshold(timeIndex)
-            # we sum the probabilities corresponding to all the realizations with
-            # enough ups k, and then we take the percentage
-            # we have + 1 because 0:n is 0,1,..,n-1. We want to consider all the
-            # realizations with anumber of downs <= timeIndex - threshold
-            return 100.0 * sum(probabilities[0:timeIndex - threshold + 1])
 
     def getDiscountedAverageAtGivenTime(self, timeIndex):
         """
@@ -315,3 +255,53 @@ class BinomialModelSmart(BinomialModel):
             # we discount the weighted sum of the realizations
             discountedAverage = (1 + self.interestRate) ** (-timeIndex) * np.dot(probabilities, realizations)
             return discountedAverage
+
+
+    def findThreshold(self, timeIndex):
+        """
+        It returns the smallest integer k such that (u)^kd^(timeIndex-k) > 1,
+        i.e., such that the realization of the process given by k ups and
+        timeIndex - k downs, discounted at time 0, is bigger than the initial value.
+
+        Parameters
+        ----------
+        timeIndex : int
+            the time at which we want to compute such a threshold.
+
+        Returns
+        -------
+        int
+            the smallest integer k such that (u)^kd^(timeIndex-k) > 1
+
+        """
+        rho = self.interestRate
+        u = self.increaseIfUp
+        d = self.decreaseIfDown
+        return math.ceil(math.log(((1 + rho) / d) ** timeIndex, u / d))
+
+    def getPercentageOfGainAtGivenTime(self, timeIndex):
+        """
+        Parameters
+        ----------
+        timeIndex : int
+            The time j at which we want the probability that (1+rho)^(-j)S(j)>S(0)
+            with rho = self.interestRate
+
+        Returns
+        -------
+        float
+            the probability that (1+rho)^(-timeIndex)S(timeIndex)>S(0)
+            with rho = self.interestRate
+
+        """
+        if timeIndex == 0:
+            return 100.0
+        else:
+            probabilities = self.getProbabilitiesOfRealizationsAtGivenTime(timeIndex)
+            threshold = self.findThreshold(timeIndex)
+            # we sum the probabilities corresponding to all the realizations with
+            # enough ups k, and then we take the percentage
+            # we have + 1 because 0:n is 0,1,..,n-1. We want to consider all the
+            # realizations with a number of downs <= timeIndex - threshold
+            return 100.0 * sum(probabilities[0:timeIndex - threshold + 1])
+

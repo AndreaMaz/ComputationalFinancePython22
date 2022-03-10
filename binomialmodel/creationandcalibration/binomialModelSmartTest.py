@@ -25,11 +25,12 @@ myBinomialModelSmart = BinomialModelSmartWithLists(initialValue, decreaseIfDown,
                                 numberOfTimes, interestRate)
 
 #prints..
-myBinomialModelSmart.printEvolutionProbabilitiesOfGain()
+myBinomialModelSmart.printEvolutionPercentagesOfGain()
 myBinomialModelSmart.printEvolutionDiscountedAverage()
 
 #..and plots
-myBinomialModelSmart.plotEvolutionProbabilitiesOfGain()
+myBinomialModelSmart.plotEvolutionPercentagesOfGain()
 myBinomialModelSmart.plotEvolutionDiscountedAverage()
 
-real = myBinomialModelSmart.getRealizations()
+
+

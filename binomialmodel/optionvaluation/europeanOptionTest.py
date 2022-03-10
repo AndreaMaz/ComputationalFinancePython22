@@ -7,11 +7,11 @@ on a binomial model
 @author: Andrea Mazzon
 """
 
-import time
 
 #from europeanOption import EuropeanOption
-from europeanOptionWithLists import EuropeanOption
 from binomialmodel.creationandcalibration.binomialModelSmart import BinomialModelSmart
+from europeanOption import EuropeanOption
+
 
 
 
@@ -30,7 +30,6 @@ maturity = numberOfTimes - 1
 
 payoff = lambda x : max(x-initialValue,0)
 
-start = time.time()
 
 priceWithWeightedSum = myPayoffEvaluator.evaluateDiscountedPayoff(payoff, maturity)
 priceFromStrategy = myPayoffEvaluator.getInitialDiscountedValuePortfolio(payoff, maturity)
@@ -42,13 +41,14 @@ print("The discounted price of the option computed going backward is ",
       priceFromStrategy)
 print()
 
-currentTime = maturity - 1
 
 amountInRiskyAssetMatrix, amountInRiskFreeAssetMatrix = myPayoffEvaluator.getStrategy(payoff, maturity)
 
+currentTime = maturity - 1
+
+
 amountInRiskyAsset, amountInRiskFreeAsset = myPayoffEvaluator.getStrategyAtGivenTime(payoff, currentTime, maturity)
 
-end = time.time()
 
 print("The amount of money that has to be invested in the risky asset at time ",
       currentTime, " is")
@@ -65,9 +65,3 @@ print("The amount of money that has to be invested in the risk free asset at tim
 print()
 
 print('\n'.join('{:.3}'.format(amount) for amount in amountInRiskFreeAsset))
-
-print()
-
-print("Elapse time ", end - start)
-
-processReal = myBinomialModelSmart.getRealizationsAtGivenTime(maturity)

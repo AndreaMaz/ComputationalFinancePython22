@@ -34,7 +34,7 @@ class BinomialModelCalibration:
     Methods
     -------
     calibrateFromLogVarianceForGivenTime(observedVariance, observationTime)
-        It returns tha calibrated parameters u and d from the risk neutral probability
+        It returns the calibrated parameters u and d from the risk neutral probability
         uf ups and from the observed variance of S(observationTime)/S(0) at
         time observationTime.
      testCalibration(decreaseIfDown, increaseIfUp, observationTime):
