@@ -3,8 +3,11 @@
 """
 @author: Andrea Mazzon
 """
-from numpy import mean, vectorize
+
 import math
+
+from numpy import mean, vectorize
+
 
 class SimpleEuropeanOption:
     """
@@ -40,7 +43,7 @@ class SimpleEuropeanOption:
         in the realizations of the process stored in self.processRealizations.
     """
      #Python specific syntax for the constructor
-    def __init__(self, processRealizations, r = 0):#r = 0 if not specified
+    def __init__(self, processRealizationsInput, r = 0):#r = 0 if not specified
         """    
         Parameters
         ----------
@@ -49,7 +52,7 @@ class SimpleEuropeanOption:
         r : float
             the interest rate
         """
-        self.processRealizations = processRealizations
+        self.processRealizations = processRealizationsInput
         self.r = r
     
     
@@ -70,16 +73,18 @@ class SimpleEuropeanOption:
         """
         #processRealizations[i] -> payoffFunction(processRealizations[i])
         #look at this peculiar Python for loop: this is equivalent to write
-        #for k in range (self.processRealizations.length) #k=0,1,2,...,self.processRealizations.length-1
+        #payoffRealizations = []
+        #for k in range (self.processRealizations.length): #k=0,1,2,...,self.processRealizations.length-1
         #    payoffRealizations[k] = payoffFunction(self.processRealizations[k])
         #The part "for x in self.processRealizations" is similar to the Java foreach.
         #loop.
+        #payoffRealizations = [payoffFunction(x) for x in self.processRealizations]
 
-        payoffRealizations = [payoffFunction(x) for x in self.processRealizations]
+        def vectorizedPayoff(x):
+            vectorizedFunction = vectorize(payoffFunction)
+            return vectorizedFunction(x)
 
-        #def vectorizedPayoff(x):
-        #    return vectorize(payoffFunction)(x)
-        #payoffRealizations = vectorizedPayoff(self.processRealizations)
+        payoffRealizations = vectorizedPayoff(self.processRealizations)
 
         return payoffRealizations
     
