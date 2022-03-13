@@ -46,6 +46,8 @@ amountInRiskyAssetMatrix, amountInRiskFreeAssetMatrix = myPayoffEvaluator.getStr
 
 currentTime = maturity - 1
 
+realizations = myBinomialModelSmart.getRealizations()
+probabilities = myBinomialModelSmart.getProbabilitiesOfRealizationsAtGivenTime(maturity)
 
 amountInRiskyAsset, amountInRiskFreeAsset = myPayoffEvaluator.getStrategyAtGivenTime(payoff, currentTime, maturity)
 

@@ -5,27 +5,26 @@
 """
 
 import math
-import numpy as np 
-import scipy.stats as stat
 
 from binomialmodel.optionvaluation.americanOption import AmericanOption
 from binomialmodel.creationandcalibration.binomialModelSmart import BinomialModelSmart
 
 from europeanOption import EuropeanOption
 
+from analyticformulas.analyticFormulas import blackScholesPricePut
 
 class AmericanOptionWithControlVariates:
     """
     This class is devoted to an application of control variates to the
-    approximation of the price of an american call and put option under the
+    approximation of the price of an american put option under the
     Black-Scholes model, simulating a binomial model. 
     
     In particular, we rely on: 
-        - the analytic price P_E of an european call/put under the Black-Scholes
+        - the analytic price P_E of an european put under the Black-Scholes
          model
-        - the Monte-Carlo price P_E^N of an european call/put under the Black-Scholes
+        - the Monte-Carlo price P_E^N of an european put under the Black-Scholes
           model, simulating a binomial model with N times
-        - the Monte-Carlo price P_A^N of an american call/put under the Black-Scholes
+        - the Monte-Carlo price P_A^N of an american put under the Black-Scholes
           model, simulating a binomial model with N times
           
     Using the heuristic that P_A - P_A^N is approximately equal to P_E - P_E^N,
@@ -47,10 +46,6 @@ class AmericanOptionWithControlVariates:
 
     Methods
     -------
-    blackScholesPriceCallAndPut():
-        It returns the analytical value of an european call/put option written
-        on a Black-Scholes model
-   
     getAmericanCallAndPutPriceWithBinomialModel(numberOfTimes):
         It returns the approximated value of an european call/put option written
         on a Black-Scholes model, by using a binomial model with numberOfTimes
@@ -88,43 +83,11 @@ class AmericanOptionWithControlVariates:
         self.sigma = sigma
         self.maturity = maturity
         self.strike = strike
-    
 
-    def blackScholesPriceCallAndPut(self):
+    
+    def getAmericanPutPriceWithBinomialModel(self, numberOfTimes):
         """
-        It returns the analytical value of an european call/put option written
-        on a Black-Scholes model
-
-        Returns
-        -------
-        callPrice : float
-            the price of the call.
-        putPrice : float
-            the proce of the put.
-
-        """   
-        initialValue = self.initialValue
-        r = self.r
-        sigma = self.sigma
-        maturity = self.maturity
-        strike = self.strike
-        
-        d1 = (np.log(initialValue / strike) + (r + 0.5 * sigma ** 2) * maturity) / \
-            (sigma * np.sqrt(maturity))
-        d2 = (np.log(initialValue / strike) + (r - 0.5 * sigma ** 2) * maturity) / \
-            (sigma * np.sqrt(maturity))
-    
-        callPrice = (initialValue * stat.norm.cdf(d1, 0.0, 1.0) - \
-                     strike * np.exp(-r * maturity) * stat.norm.cdf(d2, 0.0, 1.0))
-        putPrice = (strike * np.exp(-r * maturity) * stat.norm.cdf(-d2, 0.0, 1.0) -\
-                    initialValue * stat.norm.cdf(-d1, 0.0, 1.0))
-        
-        return callPrice, putPrice
-
-    
-    def getAmericanCallAndPutPriceWithBinomialModel(self, numberOfTimes):
-        """
-        It returns the approximated value of an american call/put option written
+        It returns the approximated value of an american put option written
         on a Black-Scholes model, by using a binomial model with numberOfTimes
         times
 
@@ -135,10 +98,8 @@ class AmericanOptionWithControlVariates:
 
         Returns
         -------
-        priceCall : float
-            the approximated price of the call.
-        pricePut : float
-            the approximated price of the put.
+        priceAmericanPut : float
+            the approximated price of the American put.
 
         """
         initialValue = self.initialValue
@@ -157,18 +118,16 @@ class AmericanOptionWithControlVariates:
     
         payoffEvaluator = AmericanOption(binomialmodel)
         
-        payoffCall = lambda x : max(x-strike,0)
         payoffPut = lambda x : max(strike - x,0)
         
-        priceCall = payoffEvaluator.getValueOption(payoffCall, numberOfTimes - 1)
-        pricePut = payoffEvaluator.getValueOption(payoffPut, numberOfTimes - 1)
+        priceAmericanPut = payoffEvaluator.getValueOption(payoffPut, numberOfTimes - 1)
         
-        return priceCall, pricePut
+        return priceAmericanPut
 
 
-    def getEuropeanCallAndPutPriceWithBinomialModel(self, numberOfTimes):
+    def getEuropeanPutPriceWithBinomialModel(self, numberOfTimes):
         """
-        It returns the approximated value of an european call/put option written
+        It returns the approximated value of an european put option written
         on a Black-Scholes model, by using a binomial model with numberOfTimes
         times
 
@@ -179,10 +138,8 @@ class AmericanOptionWithControlVariates:
 
         Returns
         -------
-        priceCall : float
-            the approximated price of the call.
-        pricePut : float
-            the approximated price of the put.
+        priceEuropeanPut : float
+            the approximated price of the European put.
 
         """
         
@@ -202,18 +159,15 @@ class AmericanOptionWithControlVariates:
     
         payoffEvaluator = EuropeanOption(binomialmodel)
         
-        payoffCall = lambda x : max(x-strike,0)
         payoffPut = lambda x : max(strike - x,0)
+        priceEuropeanPut = payoffEvaluator.evaluateDiscountedPayoff(payoffPut, numberOfTimes - 1)
         
-        priceCall = payoffEvaluator.evaluateDiscountedPayoff(payoffCall, numberOfTimes - 1)
-        pricePut = payoffEvaluator.evaluateDiscountedPayoff(payoffPut, numberOfTimes - 1)
-        
-        return priceCall, pricePut
+        return priceEuropeanPut
 
 
-    def getAmericanCallAndPutPriceWithControlVariates(self, numberOfTimes):
+    def getAmericanPutPriceWithControlVariates(self, numberOfTimes):
         """
-        It returns the approximated value of an american call/put option written
+        It returns the approximated value of an american put option written
         on a Black-Scholes model, by using control variates
         
         Parameters
@@ -223,20 +177,17 @@ class AmericanOptionWithControlVariates:
 
         Returns
         -------
-        priceCall : float
-            the approximated price of the call.
         pricePut : float
             the approximated price of the put.
 
         """
         
-        bSCallEuropean, bSPutEuropean = self.blackScholesPriceCallAndPut()
+        bSPutEuropean = blackScholesPricePut(self.initialValue, self.r, self.sigma, self.maturity, self.strike)
         
-        binomialCallEuropean, binomialPutEuropean = self.getEuropeanCallAndPutPriceWithBinomialModel(numberOfTimes)
+        binomialPutEuropean = self.getEuropeanPutPriceWithBinomialModel(numberOfTimes)
         
-        binomialCallAmerican, binomialPutAmerican = self.getAmericanCallAndPutPriceWithBinomialModel(numberOfTimes)
+        binomialPutAmerican = self.getAmericanPutPriceWithBinomialModel(numberOfTimes)
         
-        controlVariateCallAmerican = binomialCallAmerican + (bSCallEuropean - binomialCallEuropean)
         controlVariatePutAmerican = binomialPutAmerican + (bSPutEuropean - binomialPutEuropean)
     
-        return controlVariateCallAmerican, controlVariatePutAmerican
+        return controlVariatePutAmerican
