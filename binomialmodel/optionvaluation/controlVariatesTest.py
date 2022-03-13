@@ -9,6 +9,7 @@ valuation of an american call and put option better.
 
 from controlVariates import AmericanOptionWithControlVariates
 import matplotlib.pyplot as plt
+from analyticformulas.analyticFormulas import blackScholesPricePut
 
 #parameters for the model
 initialValue = 1
@@ -26,17 +27,17 @@ americanCV = []
 americanBinomial =[]
 european = []
 
+evaluator = AmericanOptionWithControlVariates(initialValue, r, sigma, maturity, strike)
 
 for numberOfTimes in range (2, maximumNumberOfTimes + 1):
     
-    evaluator = AmericanOptionWithControlVariates(initialValue, r, sigma, maturity, strike) 
     #note that we want the put price: we then select the entries [1]
-    americanCV.append(evaluator.getAmericanCallAndPutPriceWithControlVariates(numberOfTimes)[1])
-    americanBinomial.append(evaluator.getAmericanCallAndPutPriceWithBinomialModel(numberOfTimes)[1])
-    european.append(evaluator.getEuropeanCallAndPutPriceWithBinomialModel(numberOfTimes)[1])
+    americanCV.append(evaluator.getAmericanPutPriceWithControlVariates(numberOfTimes))
+    americanBinomial.append(evaluator.getAmericanPutPriceWithBinomialModel(numberOfTimes))
+    european.append(evaluator.getEuropeanPutPriceWithBinomialModel(numberOfTimes))
   
 #here as well 
-blackScholesPrice = evaluator.blackScholesPriceCallAndPut()[1] 
+blackScholesPrice = blackScholesPricePut(initialValue, r, sigma, maturity, strike)
 blackScholesVector = [blackScholesPrice] * (maximumNumberOfTimes - 1)
 
 plt.plot(americanCV)
