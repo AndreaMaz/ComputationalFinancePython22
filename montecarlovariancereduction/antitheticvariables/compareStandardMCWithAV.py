@@ -56,10 +56,10 @@ def compare(numberOfSimulations, initialValue, sigma, T, strike, r = 0):
     errorsMonteCarloWithAV = []
     
     #our benchmark: the analytic price of the call option
-    analyticPriceBS = blackScholesPriceCall(initialValue, r, sigma, T, initialValue)
+    analyticPriceBS = blackScholesPriceCall(initialValue, r, sigma, T, strike)
 
     #look at how lambda functions are defined in Python 
-    payoff = lambda x : max(x - initialValue, 0)
+    payoff = lambda x : max(x - initialValue, 0)#at the money option
     #alternatively:
     #def payoff(x):
     #    return max(x - initialValue, 0)
@@ -75,7 +75,7 @@ def compare(numberOfSimulations, initialValue, sigma, T, strike, r = 0):
     
         priceCalculatorWithStandardMC = SimpleEuropeanOption(realizationsOfTheProcessWithStandardMC, r)
         priceStandardMC = priceCalculatorWithStandardMC.getPrice(payoff, T) 
-        errorWithStandardMC= abs(priceStandardMC - analyticPriceBS)/analyticPriceBS
+        errorWithStandardMC = abs(priceStandardMC - analyticPriceBS)/analyticPriceBS
         #note how to append new values to a list
         errorsStandardMonteCarlo.append(errorWithStandardMC)
         

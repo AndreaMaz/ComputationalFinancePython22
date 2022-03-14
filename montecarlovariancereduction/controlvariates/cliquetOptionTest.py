@@ -67,7 +67,7 @@ cliquetWithArrays = \
     CliquetOptionWithArrays(numberOfSimulations, maturity, localFloor, localCap, globalFloor, globalCap)
 
 # ..and with faster implementation of control variates, using arrays
-fasterCliquetWithControlVariates = \
+fasterCliquetWithControlVariatesWithArrays = \
     FasterControlVariatesCliquetBSWithArrays(numberOfSimulations, maturity, numberOfTimeIntervals,
                                    localFloor, localCap, globalFloor, globalCap, sigma, r)
 
@@ -127,7 +127,7 @@ for k in range(numberOfTests):
 
     # ..and finally with the faster control variates using arrays
     start = time.time()
-    priceFasterCVWithArrays = fasterCliquetWithControlVariates.getPriceViaControlVariates()
+    priceFasterCVWithArrays = fasterCliquetWithControlVariatesWithArrays.getPriceViaControlVariates()
     end = time.time()
     pricesFasterCVWithArrays.append(priceFasterCVWithArrays)
     timesFasterCVWithArrays.append(end - start)

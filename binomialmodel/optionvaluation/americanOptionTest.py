@@ -29,5 +29,7 @@ payoff = lambda x : max(initialValue-x,0)
 valuesOption, valuesExercise, valuesIfWait, exercise = \
     myPayoffEvaluator.analysisOption(payoff, maturity)
 
+valuesOfProcess = myBinomialModelSmart.getRealizations()
+
 print("The value of the option is ", myPayoffEvaluator.getValueOption(payoff, maturity))
 

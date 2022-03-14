@@ -6,6 +6,9 @@
 import numpy as np
 import math
 
+from numpy import vectorize
+
+
 class GenerateBlackScholes:
     """
     In this class we generate N realizations of a log-normal process
@@ -81,7 +84,7 @@ class GenerateBlackScholes:
         #no seed at all, self.seed will have value None, that is, no value (like
         #Null in Java). In this case, it will call np.random.seed(). Indeed,
         #the value of the seed is a default argument in np.random.seed
-        np.random.seed(seed)
+        np.random.seed()
         
         
     def generateRealizations(self):
@@ -92,8 +95,8 @@ class GenerateBlackScholes:
         
         In particular, it does it by generating N values of standard normal
         random variables Z(j), j = 1, ..., N, and computing for every j
-        X_T(j) = X_0 exp((r- 0.5 sigma^2) T + sigma T^0.5 Z(j))
-
+        X_T(j) = X_0 exp((r- 0.5 sigma^2) T + sigma T^0.5 Z(j))=
+        X_0 exp((r- 0.5 sigma^2) T))exp(sigma T^0.5 Z(j))
         Returns
         -------
         blackScholesRealizations : list
@@ -112,7 +115,7 @@ class GenerateBlackScholes:
         BSFunction = lambda x : firstPart * math.exp(self.sigma * math.sqrt(self.T) * x)
         #or:
 
-        # def BSFunction(x):
+        #def BSFunction(x):
         #    return firstPart * math.exp(self.sigma * math.sqrt(self.T) * x)
 
 
@@ -121,13 +124,17 @@ class GenerateBlackScholes:
         #    blackScholesRealizations[k] = firstPart * math.exp(self.sigma * math.sqrt(self.T) * blackScholesRealizations[k])
         #The part (fox x in self.processRealizations) is similar to the Java foreach loop.
         #Such a loop returns a list
-        blackScholesRealizations = [BSFunction(x) for x in standardNormalRealizations]
+        #blackScholesRealizations = [BSFunction(x) for x in standardNormalRealizations]
 
         #alternative way if you want blackScholesRealizations to be an array:
         #blackScholesRealizations = np.array([BSFunction(x) for x in standardNormalRealizations])
 
         #another way to return an array:
-        #blackScholesRealizations = BSFunction(standardNormalRealizations)
+        def vectorizedBS(x):
+            vectorizedBS = vectorize(BSFunction)
+            return vectorizedBS(x)
+
+        blackScholesRealizations = vectorizedBS(standardNormalRealizations)
 
         return blackScholesRealizations
        
@@ -162,9 +169,14 @@ class GenerateBlackScholes:
         BSFunction = lambda x: firstPart * math.exp(self.sigma * math.sqrt(self.T) * x)
 
         #note the use of the concatenation operator "+" between Python lists
-        blackScholesRealizations = [BSFunction(x) for x in standardNormalRealizations] + \
-          [BSFunction(-x) for x in standardNormalRealizations]
+       # blackScholesRealizations = [BSFunction(x) for x in standardNormalRealizations] + \
+        #  [BSFunction(-x) for x in standardNormalRealizations]
 
+        def vectorizedBS(x):
+            vectorizedBS = vectorize(BSFunction)
+            return vectorizedBS(x)
+
+        blackScholesRealizations = vectorizedBS(standardNormalRealizations)
         #alternatively, to get an array:
         #blackScholesRealizations = np.concatenate((BSFunction(standardNormalRealizations), BSFunction(-standardNormalRealizations)))
                

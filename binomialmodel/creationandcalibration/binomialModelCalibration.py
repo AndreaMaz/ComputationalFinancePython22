@@ -89,8 +89,8 @@ class BinomialModelCalibration:
         def equations(p):
             u, d = p
             # see the computations in the script
-            return (1 + rho - d) / (u - d) - q, math.log(u / d) ** 2 - observedVariance / (
-                        observationTime * q * (1 - q))
+            return (1 + rho - d) / (u - d) - q, \
+                   math.log(u / d) ** 2 - observedVariance / (observationTime * q * (1 - q))
             # note that we give the values from which we start to get u and d
 
         return fsolve(equations, (1 + rho + 0.1, 0.1))

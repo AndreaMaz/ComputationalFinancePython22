@@ -37,7 +37,7 @@ class StandardEulerDiscretizationBlackScholes:
         It returns all the realizations of the process
     getRealizationsAtGivenTimeIndex(timeIndex):
         It returns the realizations of the process at a given time index
-    getRealizationsAtGivenTimeIndex(time):
+    getRealizationsAtGivenTime(time):
         It returns the realizations of the process at a given time
     getAverageRealizationsAtGivenTimeIndex(timeIndex):
         It returns the average realizations of the process at a given time index

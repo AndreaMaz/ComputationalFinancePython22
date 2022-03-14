@@ -203,8 +203,10 @@ class BinomialModelSmart(BinomialModel):
         else:
             q = self.riskNeutralProbabilityUp
             # NOTE: k represents the number of downs here
-            probabilities = [scipy.special.binom(timeIndex, k) * q ** (timeIndex - k) * (1 - q) ** k
-                             for k in range(timeIndex + 1)]
+            probabilities = [scipy.special.binom(timeIndex, numberOfDowns) * q ** (
+                        timeIndex - numberOfDowns) * (1 - q) ** numberOfDowns for numberOfDowns in range(timeIndex + 1)]
+            #probabilities = [1/(timeIndex+1)/scipy.special.beta(1+ timeIndex - numberOfDowns, 1 + numberOfDowns) * q ** (timeIndex - numberOfDowns) * (1 - q) ** numberOfDowns
+            #                 for numberOfDowns in range(timeIndex + 1)]
             return probabilities
 
     def printProbabilitiesOfRealizationsAtGivenTime(self, timeIndex):

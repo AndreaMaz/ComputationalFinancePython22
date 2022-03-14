@@ -54,6 +54,7 @@ for numberOfTimes in range (2, maximumNumberOfTimes + 1):
     
     
     myPayoffEvaluator = AmericanOption(binomialmodel)
+
     prices.append(myPayoffEvaluator.getValueOption(payoff, numberOfTimes - 1))
     
   

@@ -13,15 +13,14 @@ the initial value.
 @author: Andrea Mazzon
 """
 from binomialModelSmart import BinomialModelSmart
-from binomialModelSmartWithLists import BinomialModelSmartWithLists
 
 initialValue = 3.0
-decreaseIfDown = 0.5
-increaseIfUp = 1.5
-numberOfTimes = 150
+decreaseIfDown = 0.9
+increaseIfUp = 1.1
+numberOfTimes = 1500
 interestRate = 0.0
 
-myBinomialModelSmart = BinomialModelSmartWithLists(initialValue, decreaseIfDown, increaseIfUp,
+myBinomialModelSmart = BinomialModelSmart(initialValue, decreaseIfDown, increaseIfUp,
                                 numberOfTimes, interestRate)
 
 #prints..

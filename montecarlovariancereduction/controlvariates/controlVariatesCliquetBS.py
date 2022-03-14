@@ -10,7 +10,7 @@ import math
 
 from analyticformulas.analyticFormulas import blackScholesPriceCall
 from cliquetOption import CliquetOption
-from generateBSReturns import GenerateBSReturns
+from generateBSReturnsWithArrays import GenerateBSReturns
 
 
 
@@ -45,7 +45,7 @@ class ControlVariatesCliquetBS:
     The partition is supposed here to be equi-spaced.                              
     
     The returns of the log-normal process are computed as
-    X_{t_{j+1}}/X_{t_{j}} - 1 = exp((r- 0.5 sigma^2) dt + sigma dt^0.5 Z) - 1,
+    X_{t_{j+1}}/X_{t_{j}} = exp((r- 0.5 sigma^2) dt + sigma dt^0.5 Z),
     where Z is a standard normal random variable and dt is the (constant)
     length of the intervals.
     
@@ -79,13 +79,7 @@ class ControlVariatesCliquetBS:
 
     Methods
     -------
-    payoffSingleTrajectory(returns):
-        It returns the payoff of the Cliquet option for a specific simulation,
-        not yet discounted
-   
-    def discountedPriceOfTheOption(returnsForAllSimulations, interestRate):
-        It returns the discounted price of the Cliquet option, as the discounted
-        average of the payoffs for a single simulation of the returns.
+
     """
     
     def __init__(self, numberOfSimulations, maturity, numberOfIntervals, 
@@ -145,7 +139,7 @@ class ControlVariatesCliquetBS:
               
         where 
         
-        Y_k = R_k + 1.
+        Y_k = R_k + 1 = X_k/X_{k-1}.
                                
 
         Returns
@@ -156,7 +150,7 @@ class ControlVariatesCliquetBS:
 
         """
         
-        #the options are at the money: we are considering an option on the return
+        #we are considering an option on the return
         initialValue = 1
         
         maturityOfTheCallOptions = self.maturity/self.numberOfIntervals
@@ -168,15 +162,15 @@ class ControlVariatesCliquetBS:
         #the option! That is, discounted with respect to the option maturity.
         #But this is not what we want, in our application. So we multiply
         #it by the opposite of the discounting factor
-        discountFactorBlackScholes = math.exp(self.r * maturityOfTheCallOptions)
+        discountFactorBlackScholes = math.exp(-self.r * maturityOfTheCallOptions)
 
         firstCallPrice = blackScholesPriceCall(initialValue, self.r, self.sigma,
                                                maturityOfTheCallOptions, firstStrike)\
-            * discountFactorBlackScholes
+            / discountFactorBlackScholes
         
         secondCallPrice = blackScholesPriceCall(initialValue, self.r, self.sigma,
                                                maturityOfTheCallOptions, secondStrike)\
-            * discountFactorBlackScholes
+            / discountFactorBlackScholes
         
         #we repeat the same over all the time intervals, so we multiply by
         #their number

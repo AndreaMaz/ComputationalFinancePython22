@@ -13,11 +13,11 @@ process is bigger than the initial value.
 from binomialModelMonteCarlo import BinomialModelMonteCarlo
 
 initialValue = 3
-decreaseIfDown = 0.9
-increaseIfUp = 1.1
-numberOfTimes = 5
+decreaseIfDown = 0.5
+increaseIfUp = 1.5
+numberOfTimes = 150
 numberOfSimulations = 100000
-interestRate = 0.05
+interestRate = 0.0
 
 # look how to construct an object in Python
 myBinomialModel = BinomialModelMonteCarlo(initialValue, decreaseIfDown, increaseIfUp,

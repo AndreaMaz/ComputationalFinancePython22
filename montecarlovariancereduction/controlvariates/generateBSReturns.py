@@ -14,7 +14,7 @@ class GenerateBSReturns:
     forms a partition of [0, T], equi-spaced.                                
     
     The returns are computed as
-    X_{t_{j+1}}/X_{t_{j}} - 1 = exp((r- 0.5 sigma^2) dt + sigma dt^0.5 Z) - 1,
+    X_{t_{j+1}}/X_{t_{j}} = exp((r- 0.5 sigma^2) dt + sigma dt^0.5 Z),
     where Z is a standard normal random variable and dt is the (constant)
     length of the intervals
     
@@ -92,17 +92,17 @@ class GenerateBSReturns:
         lenghthOfIntervals = self.finalTime / self.numberOfIntervals 
         
         blackScholesReturns = []
-        
+
+        standardNormalRealizations = np.random.standard_normal((self.numberOfSimulations,self.numberOfIntervals))
         #we don't want to compute this every time.
         firstPart = math.exp((self.r - 0.5 * self.sigma**2) * lenghthOfIntervals)
-        
         for k in range (self.numberOfSimulations):
             #note the way to get a given number of realizations of a standard normal
             #random variable. 
-            standardNormalRealizations = np.random.standard_normal(self.numberOfIntervals)
+            #standardNormalRealizations = np.random.standard_normal(self.numberOfIntervals)
             #usual way to write a log-normal random variable
             returns = [firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * x) \
-                for x in standardNormalRealizations]
+                for x in standardNormalRealizations[k]]
             blackScholesReturns.append(returns)
             
         return blackScholesReturns
@@ -135,10 +135,11 @@ class GenerateBSReturns:
             standardNormalRealizations = np.random.standard_normal(self.numberOfIntervals)
             #we append two rows: one for the generated realization, one for their
             #opposite
-            blackScholesReturns.append([firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * x) \
-                for x in standardNormalRealizations])
-            blackScholesReturns.append(
-                    [firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * (-x)) \
-                         for x in standardNormalRealizations])
+            returns = [firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * x) \
+                for x in standardNormalRealizations]
+            returnsWithOppositeSignOfStandardNormal =  [firstPart * math.exp(self.sigma * math.sqrt(lenghthOfIntervals) * (-x)) \
+                         for x in standardNormalRealizations]
+            blackScholesReturns.append(returns)
+            blackScholesReturns.append(returnsWithOppositeSignOfStandardNormal)
                
         return blackScholesReturns

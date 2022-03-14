@@ -343,7 +343,7 @@ class BinomialModelMonteCarlo(BinomialModel):
             process at given times.
         """
 
-        return [self.getMaximumAtGivenTime(timeIndex) for timeIndex in range(self.numberOfTimes - 1)]
+        return [self.getMaximumAtGivenTime(timeIndex) for timeIndex in range(self.numberOfTimes)]
 
     def printEvolutionMaximum(self):
         """
