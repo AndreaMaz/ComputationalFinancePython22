@@ -62,7 +62,6 @@ for numberOfTimes in range (2, maximumNumberOfTimes + 1):
     
   
 blackScholesPrice = blackScholesDownAndOut(initialValue, r, sigma, maturity, strike, lowerBarrier)
-#blackScholesPrice = blackScholesPriceCall(initialValue, r, sigma, maturity, strike)
 plt.plot(prices)
 blackScholesVector = [blackScholesPrice] * (maximumNumberOfTimes - 1)
 plt.plot(blackScholesVector)
