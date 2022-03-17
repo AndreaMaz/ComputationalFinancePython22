@@ -17,9 +17,9 @@ from analyticformulas.analyticFormulas import blackScholesDownAndOut
 
 
 numberOfSimulations = 10000
-seed = 1897
+seed = 20
 
-timeStep = 0.1
+timeStep = 0.001
 finalTime = 3
 maturity = finalTime
 
@@ -29,7 +29,7 @@ sigma = 0.5
 
 
 strike = 2
-lowerBarrier = 1
+lowerBarrier = 1.9
 
 analyticPrice = blackScholesDownAndOut(initialValue, r, sigma, maturity, strike, lowerBarrier)
 

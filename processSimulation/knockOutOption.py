@@ -89,15 +89,19 @@ class KnockOutOption:
         #for simulation k, if we assume that the process is simulated up to 
         #maturity. Otherwise, we can get the index corresponding to the maturity
         #if we know the time step of the process.
-        payoffRealizations = [self.payoffFunction(processRealizations[-1, k]) \
-                                  if np.amax(processRealizations[:, k]) < self.upperBarrier \
-                                     and np.amin(processRealizations[:, k]) > self.lowerBarrier \
-                                  else 0 for k in range(len(processRealizations[0]))]
-        #payoffRealizations = [self.payoffFunction(givenTrajectory[-1]) \
-         #                         if np.amax(givenTrajectory) < self.upperBarrier \
-         #                           and np.amin(givenTrajectory) > self.lowerBarrier \
-          #                        else 0 for givenTrajectory in processRealizations.transpose()]
-        
+        #payoffRealizations = [self.payoffFunction(processRealizations[-1, k]) \
+        #                          if np.amax(processRealizations[:, k]) < self.upperBarrier \
+        #                             and np.amin(processRealizations[:, k]) > self.lowerBarrier \
+        #                          else 0 for k in range(len(processRealizations[0]))]
+        payoffRealizations = [self.payoffFunction(givenTrajectory[-1]) \
+                                  if np.amax(givenTrajectory) < self.upperBarrier \
+                                    and np.amin(givenTrajectory) > self.lowerBarrier \
+                                  else 0 for givenTrajectory in processRealizations.transpose()]
+        #for j = 0,1,..,n
+        # givenTrajectory = transposedMatrixRealizations[j]
+        # payoff = payoffFunction(givenTrajectory[-1]) if givenTrajectory in (B_L, B_U)
+
+        #or np.transpose(processRealizations)
         return payoffRealizations
     
     

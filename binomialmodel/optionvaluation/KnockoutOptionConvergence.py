@@ -32,7 +32,7 @@ payoff = lambda x : max (x-strike,0)
 
 
 #the maximum number of times N we use to approximate the price
-maximumNumberOfTimes = 1000
+maximumNumberOfTimes = 2000
 
 #we want to keep track of the prices and plot them
 prices = []

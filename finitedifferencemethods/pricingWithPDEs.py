@@ -162,7 +162,7 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
         self.__initializeU()
         self.currentTime = 0
         timeToPlot = 0 # we want to plot at times 0, 0.1, 0.2,..
-        for i in range(self.numberOfTimeSteps+2):
+        for timeIndex in range(self.numberOfTimeSteps+2):
             #we get the new solution. The solution will be computed in the
             #derived classes according to self.currentTime and self.uPast                           
             self.u = self.getSolutionAtNextTime()
@@ -201,21 +201,18 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
         """
         self.__initializeU()
         self.currentTime = 0
-        solution = np.zeros((self.numberOfTimeSteps+1,self.numberOfSpaceSteps+1))
+        self.solution = np.zeros((self.numberOfTimeSteps+1,self.numberOfSpaceSteps+1))
         for i in range(self.numberOfTimeSteps+1):
             #we store the solution at past time
-            solution[i] = self.u           
+            self.solution[i] = self.u
             #we get the solution at current time. The solution will be computed in the
             #derived classes according to self.currentTime and self.uPast                    
             self.u = self.getSolutionAtNextTime()
             self.uPast = self.u
             self.currentTime += self.dt
-        self.solution = solution
         self.alreadyComputedTheSolution = True #we want to compute all the solution only once.
-        self.__initializeU()
-        self.currentTime = 0
-        return self.solution 
-   
+
+
       
     def getSolutionForGivenTimeAndValue(self, time, space):
         """
@@ -235,11 +232,12 @@ class PricingWithPDEs(metaclass=abc.ABCMeta):
 
         """
         #we generate the solution only once
-        if not self.alreadyComputedTheSolution:
+        if self.solution is None:
            self.solveAndSave()
-        solution = self.solution
+        #if not self.alreadyComputedTheSolution:
+         #  self.solveAndSave()
         #we have to get the time and space indices
-        timeIndexForTime = round(time/self.dt)
-        spaceIndexForSpace = round((space - self.xmin)/self.dx)
-        return solution[timeIndexForTime, spaceIndexForSpace]
+        timeIndexForTime = round(time/self.dt)#i such that t_i is closest to time
+        spaceIndexForSpace = round((space - self.xmin)/self.dx)#j such that x_j is closest to space
+        return self.solution[timeIndexForTime, spaceIndexForSpace]
         
