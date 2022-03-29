@@ -82,10 +82,10 @@ class GenerateBlackScholes:
         self.r = r
         #we give the seed for the random number generator. Note that if we specify
         #no seed at all, self.seed will have value None, that is, no value (like
-        #Null in Java). In this case, it will call np.random.seed(). Indeed,
-        #the value of the seed is a default argument in np.random.seed
-        np.random.seed()
-        
+        #Null in Java). In this case, it will call np.random.RandomState(). Indeed,
+        #the value of the seed is a default argument in np.random.RandomState
+        self.randomNumberGenerator = np.random.RandomState(seed)
+
         
     def generateRealizations(self):
         """
@@ -107,7 +107,7 @@ class GenerateBlackScholes:
         #note the way to get a given number of realizations of a standard normal
         #random variable, as an array. Also note that in order to access the specific
         #field of the the class, we have to refer to it with "self.". Same things for methods
-        standardNormalRealizations = np.random.standard_normal(self.numberOfSimulations)
+        standardNormalRealizations = self.randomNumberGenerator.standard_normal(self.numberOfSimulations)
 
         #we don't want to compute this every time.
         firstPart = self.initialValue * math.exp((self.r - 0.5 * self.sigma**2) * self.T)

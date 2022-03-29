@@ -163,16 +163,18 @@ class SystemEvolution:
         self.realizations = np.zeros((numberOfTimes,self.numberOfCompanies, self.numberOfSimulations))
         self.realizations[0] = np.full((self.numberOfCompanies, self.numberOfSimulations), self.initialValues)
 
-        seed(self.mySeed)
+
+        randomNumberGenerator = np.random.RandomState(self.mySeed)
 
         #these are used in order to simulate the Brownian motions for the diffusion part
-        standardNormalRealizations = np.random.standard_normal((numberOfTimes, self.numberOfCompanies, self.numberOfSimulations))
-        
+
+        standardNormalRealizations = randomNumberGenerator.standard_normal((numberOfTimes, self.numberOfSimulations))
+
         #they are used instead to simulate the events "new tax" and "new natural disaster": such event happen when
         #the realizations of random variables uniformly distributed in (0,1) are smaller than the probability
         #of such events to happen. Same idea as for the Monte-Carlo implementation of the binomial model
-        uniformlyDistributedRealizationsForNaturalDisaster = np.random.uniform(0,1,(numberOfTimes, self.numberOfSimulations))
-        uniformlyDistributedRealizationsForNewLaw = np.random.uniform(0,1,(numberOfTimes, self.numberOfSimulations))
+        uniformlyDistributedRealizationsForNaturalDisaster = randomNumberGenerator.uniform(0,1,(numberOfTimes, self.numberOfSimulations))
+        uniformlyDistributedRealizationsForNewLaw = randomNumberGenerator.uniform(0,1,(numberOfTimes, self.numberOfSimulations))
 
         
         for timeIndex in range(1, numberOfTimes):
@@ -196,7 +198,7 @@ class SystemEvolution:
 
             #the average of all the carbon emissions of all companies up to the current time: this identifies the
             #probability of a new climate disaster in a small interval close to the current time
-            averagePastCarbonEmissions = np.mean(self.matrixOfGreenInvestmentsInTime[0:timeIndex + 1])
+            averagePastCarbonEmissions = np.mean(self.matrixOfCarbonEmissionInTime[0:timeIndex + 1])
 
             #we want these probabilities to be proportional to the time interval of the discretization
             probabilityOfNewLaw = math.atan(2*averagePastCarbonEmissions)*self.timeStep
@@ -216,10 +218,10 @@ class SystemEvolution:
 
             #here we want that jumpsForNewLaw[i,j] = isNewLawEstablished[j]*carbonEmissionOfFirm[i]: at every iteration of
             #this kind of hidden for loop, a new row of jumpsForNewLaw is constructed
-            jumpsForNewLaw = [np.where(isNewLawEstablished, carbonEmissionOfFirm, 0) for carbonEmissionOfFirm in vectorOfCarbonEmissionInTime]
+            jumpsForNewLaw = [np.where(isNewLawEstablished, 0, 0) for carbonEmissionOfFirm in vectorOfCarbonEmissionInTime]
 
             #now we want to do the same thing. In this case impactOfNaturalDisaster is a number, so we get a one-dimensional array
-            jumpsForNaturalDisasterAsVector = np.where(doesNaturalDisasterHappen, self.impactOfNaturalDisaster, 0)
+            jumpsForNaturalDisasterAsVector = np.where(doesNaturalDisasterHappen, 0, 0)
 
             #we then sum the above matrix and the above array: these are the jumps. If they are not zero, they  have
             #a negative impact on the increment of the values of the firms
@@ -229,7 +231,8 @@ class SystemEvolution:
 
             # this is the matrix whose i-th row is (-c(G_t^i)+Psi_t(omega_1) G_t^i, -c(G_t^i)+Psi_t(omega_2) G_t^i,..., -c(G_t^i)+Psi_t(omega_n) G_t^i)
             partOfTheDriftFromGreenInvestments =\
-                np.array([-self.costFunction(greenInvestmentsInTimeOfFirm) + self.stochasticDriverForBrandEnhancement[timeIndex] * greenInvestmentsInTimeOfFirm
+                np.array([-self.costFunction(greenInvestmentsInTimeOfFirm) + self.stochasticDriverForBrandEnhancement[timeIndex]
+                          * greenInvestmentsInTimeOfFirm
                                         for greenInvestmentsInTimeOfFirm in vectorOfGreenInvestmentsInTime])
 
             # this is the matrix whose i-th row is (P(C_t^i)-Phi_t(omega_1) C_t^i, P(C_t^i)-Phi_t(omega_2) G_t^i,..., P(C_t^i)-Phi_t(omega_n) G_t^i)

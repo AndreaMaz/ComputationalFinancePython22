@@ -85,7 +85,6 @@ class EulerDiscretizationForBlackScholesWithLogarithm:
         self.mySeed = mySeed
         self.interestRate = interestRate
         self.sigma = sigma
-
         #we generate all the paths for all the simulations
         self.__generateRealizations()
         
@@ -102,10 +101,9 @@ class EulerDiscretizationForBlackScholesWithLogarithm:
         #times on the rows
         realizationsOfLogarithm = np.zeros((numberOfTimes,self.numberOfSimulations))
         realizationsOfLogarithm[0] = [math.log(self.initialValue)]*self.numberOfSimulations
-        
-        seed(self.mySeed)
+        randomNumberGenerator = np.random.RandomState(self.mySeed)
 
-        standardNormalRealizations = np.random.standard_normal((numberOfTimes, self.numberOfSimulations))
+        standardNormalRealizations = randomNumberGenerator.standard_normal((numberOfTimes, self.numberOfSimulations))
 
         #we simulate the logarithm of the process, time step by time step
         for timeIndex in range(1, numberOfTimes):

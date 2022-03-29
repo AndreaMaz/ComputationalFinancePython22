@@ -104,7 +104,7 @@ class BinomialModelMonteCarlo(BinomialModel):
     def __init__(self, initialValue, decreaseIfDown, increaseIfUp,
                  numberOfTimes, numberOfSimulations,
                  interestRate=0,  # it is =0 if not specified
-                 mySeed=1897  # it is =1897 if not specified
+                 mySeed = None
                  ):
         """
         Attributes
@@ -128,7 +128,7 @@ class BinomialModelMonteCarlo(BinomialModel):
             which we use to generate the realizations of the process
          """
         self.numberOfSimulations = numberOfSimulations
-        seed(mySeed)
+        self.randomNumberGenerator = np.random.RandomState(mySeed)
         super().__init__(initialValue, decreaseIfDown, increaseIfUp,
                          numberOfTimes, interestRate)
 
@@ -152,7 +152,7 @@ class BinomialModelMonteCarlo(BinomialModel):
 
         q = self.riskNeutralProbabilityUp
 
-        randomNumbers = np.random.uniform(0, 1, size=(self.numberOfTimes, self.numberOfSimulations))
+        randomNumbers = self.randomNumberGenerator.uniform(0, 1, size=(self.numberOfTimes, self.numberOfSimulations))
 
         # ternary operator applied to matrices
         upsAndDowns = np.where(randomNumbers < q, u, d)
